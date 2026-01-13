@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Book } from '../types';
 import { Bookmark, ArrowRight, Star } from 'lucide-react';
 
@@ -45,6 +45,29 @@ const mockBooks: Book[] = [
   }
 ];
 
+const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse"></div>
+      )}
+      <img 
+        src={src} 
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={`h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+          loaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ transition: 'opacity 0.3s ease-in-out' }}
+      />
+    </>
+  );
+};
+
 const FeaturedCollections: React.FC = () => {
   return (
     <section id="catalog" className="py-24 relative">
@@ -62,12 +85,8 @@ const FeaturedCollections: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {mockBooks.map((book) => (
             <div key={book.id} className="group relative">
-              <div className="aspect-[2/3] w-full overflow-hidden rounded-2xl glass-effect shadow-lg hover:shadow-xl transition-all duration-300">
-                <img 
-                  src={book.coverUrl} 
-                  alt={book.title} 
-                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+              <div className="aspect-[2/3] w-full overflow-hidden rounded-2xl glass-effect shadow-lg hover:shadow-xl transition-all duration-300 relative">
+                <ImageWithLoader src={book.coverUrl} alt={book.title} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 <div className="absolute top-3 right-3">
